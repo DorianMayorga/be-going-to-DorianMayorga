@@ -2,82 +2,412 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Be Going To - Concurso Global</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Be Going To - Command Challenge</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { min-height: 100vh; background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); padding: 2rem 1rem; display: flex; justify-content: center; align-items: center; }
-        .container { max-width: 1300px; width: 100%; margin: 0 auto; }
-        .card { background: rgba(255,255,255,0.95); border-radius: 2rem; padding: 1.8rem; box-shadow: 0 20px 35px -10px rgba(0,0,0,0.3); margin-bottom: 2rem; }
-        h1 { font-size: 2.5rem; background: linear-gradient(135deg, #f9d423, #ff4e50); background-clip: text; -webkit-background-clip: text; color: transparent; }
-        h2 { font-size: 1.7rem; border-left: 6px solid #ff6a00; padding-left: 1rem; margin: 1rem 0; color: #1e2a3a; }
-        .quiz-question { background: white; border-radius: 1.5rem; padding: 1.2rem; margin-bottom: 1rem; border: 1px solid #e2e8f0; }
-        .options { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.8rem; }
-        .option { background: #f1f5f9; padding: 0.5rem 1.2rem; border-radius: 3rem; cursor: pointer; transition: 0.1s; }
-        .option.selected { background: #ffedd5; border: 1px solid #ff6a00; font-weight: bold; }
-        button { background: #ff6a00; color: white; border: none; padding: 0.8rem 1.8rem; border-radius: 2rem; font-weight: bold; cursor: pointer; margin: 0.5rem; }
-        .leaderboard { background: #1e2f3a; color: white; border-radius: 1.5rem; padding: 1rem; }
-        .podium { display: flex; justify-content: space-around; margin-bottom: 1rem; flex-wrap: wrap; }
-        .podium-item { background: #2c3e46; border-radius: 1rem; padding: 0.5rem 1rem; text-align: center; flex: 1; margin: 0.2rem; }
-        .medal { font-size: 2rem; }
-        .status-msg { margin: 0.8rem 0; padding: 0.5rem 1rem; border-radius: 2rem; display: inline-block; }
-        input { padding: 0.8rem 1rem; border-radius: 2rem; border: 1px solid #ccc; margin: 0.5rem; width: 200px; }
-        .loading { opacity: 0.6; pointer-events: none; }
-        @media (max-width: 700px) { .card { padding: 1rem; } h1 { font-size: 1.8rem; } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            padding: 1.8rem;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #f9d423, #ff4e50);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 1.7rem;
+            border-left: 6px solid #ff6a00;
+            padding-left: 1rem;
+            margin: 1rem 0 1rem 0;
+            color: #1e2a3a;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 1rem 0 0.5rem;
+            color: #2c3e4e;
+        }
+
+        .highlight {
+            background: #ffecb3;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-family: monospace;
+            font-size: 1.05rem;
+        }
+
+        .command-badge {
+            background: #ff4e50;
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .example-box {
+            background: #f8f9fc;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            border-left: 8px solid #ff6a00;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.05);
+        }
+
+        .example-sentence {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin: 0.5rem 0;
+        }
+
+        .explanation {
+            color: #2c5f7a;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        .name-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+            background: #eef2f7;
+            border-radius: 2rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .name-input-group {
+            flex: 2;
+            min-width: 180px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.3rem;
+            color: #1f3b47;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ff6a00;
+            box-shadow: 0 0 0 3px rgba(255,106,0,0.2);
+        }
+
+        button {
+            background: #ff6a00;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background: #e05d00;
+            transform: scale(1.02);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .quiz-question {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.1s ease;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .option {
+            background: #f1f5f9;
+            padding: 0.5rem 1.2rem;
+            border-radius: 3rem;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid transparent;
+        }
+
+        .option.selected {
+            background: #ffedd5;
+            border-color: #ff6a00;
+            font-weight: bold;
+            box-shadow: 0 0 0 2px #ffd966;
+        }
+
+        .leaderboard {
+            background: #1e2f3a;
+            color: white;
+            border-radius: 1.5rem;
+            padding: 1rem;
+        }
+
+        .leaderboard table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+        }
+
+        .leaderboard th, .leaderboard td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid #3e5a66;
+        }
+
+        .podium {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 1rem;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .podium-item {
+            background: #2c3e46;
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            flex: 1;
+        }
+
+        .medal {
+            font-size: 2rem;
+        }
+
+        .reset-btn {
+            background: #334155;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+
+        .status-msg {
+            margin: 0.8rem 0;
+            font-weight: bold;
+            color: #0f5132;
+            background: #d1e7dd;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            display: inline-block;
+        }
+
+        .status-msg.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-msg.info {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        footer {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            margin-top: 1rem;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 700px) {
+            .card { padding: 1rem; }
+            h1 { font-size: 1.8rem; }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="card" style="text-align: center;">
-        <h1>⚡ BE GOING TO - CONCURSO GLOBAL ⚡</h1>
-        <p>🎯 ¡Todos los dispositivos comparten el mismo ranking!</p>
+        <h1>⚡ BE GOING TO ⚡</h1>
+        <p style="font-size: 1.2rem; color: #2d4a5c;"><strong>Más que futuro... también para dar ÓRDENES</strong></p>
+        <p>Uso de "be going to" en comandos directos y decisiones tajantes.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.8rem; background: #e8f4f8; display: inline-block; padding: 0.2rem 1rem; border-radius: 2rem;">🌐 Ranking sincronizado en la nube</p>
     </div>
 
     <div class="card">
-        <h2>🏆 RANKING EN VIVO 🏆</h2>
-        <div class="podium" id="podiumTop3"></div>
-        <table style="width:100%; color:white;" id="scoreTable">
-            <thead><tr><th>Posición</th><th>Nombre</th><th>Puntaje/10</th></tr></thead>
-            <tbody id="scoreTableBody"><tr><td colspan="3">Cargando ranking...</td></tr></tbody>
+        <h2>📘 ¿"Be going to" para comandos?</h2>
+        <p>Normalmente usamos <span class="highlight">"going to"</span> para planes, pero en inglés informal o instrucciones firmes puede expresar <strong>órdenes, advertencias o mandatos</strong>.</p>
+        <br>
+        <p>🔹 Estructura: <strong>sujeto + am/is/are + going to + verbo</strong><br>
+        🔹 Equivale a "tienes que hacerlo" o "vas a hacer esto sí o sí".</p>
+        
+        <h3>🎯 Ejemplos de comandos</h3>
+        <div class="grid-2">
+            <div class="example-box">
+                <div><span class="command-badge">ORDEN</span> <strong>Padre a hijo</strong></div>
+                <div class="example-sentence">"You <u>are going to clean</u> your room right now."</div>
+                <div class="explanation">→ ¡Vas a limpiar tu cuarto ahora mismo!</div>
+            </div>
+            <div class="example-box">
+                <div><span class="command-badge">PROFESOR</span></div>
+                <div class="example-sentence">"You <u>are going to finish</u> this exercise before leaving."</div>
+                <div class="explanation">→ Van a terminar este ejercicio antes de salir.</div>
+            </div>
+            <div class="example-box">
+                <div><span class="command-badge">JEFE</span></div>
+                <div class="example-sentence">"We <u>are going to meet</u> the deadline, no excuses."</div>
+                <div class="explanation">→ Vamos a cumplir el plazo, sin excusas.</div>
+            </div>
+            <div class="example-box">
+                <div><span class="command-badge">NEGATIVO</span></div>
+                <div class="example-sentence">"You <u>are not going to speak</u> during the exam."</div>
+                <div class="explanation">→ No vas a hablar durante el examen (prohibición).</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🏆 CONCURSO GLOBAL 🏆</h2>
+        <p>Responde las 10 preguntas y entra al TOP 3. ¡Los puntajes se sincronizan entre TODOS los dispositivos!</p>
+
+        <div class="name-area">
+            <div class="name-input-group">
+                <label>✏️ Tu nombre:</label>
+                <input type="text" id="playerName" placeholder="Ej: Ana, Luis" maxlength="20">
+            </div>
+            <div>
+                <button id="saveNameBtn">📝 Registrar nombre</button>
+            </div>
+            <div>
+                <button id="resetQuizBtn" style="background:#436b74;">🔄 Reiniciar respuestas</button>
+            </div>
+        </div>
+        <div id="statusMessage" class="status-msg info">⚡ Ingresa tu nombre y responde todas las preguntas.</div>
+
+        <div id="quizContainer"></div>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <button id="submitQuizBtn" style="flex:2; background:#2b7a3e;">✅ ENVIAR PUNTAJE</button>
+        </div>
+    </div>
+
+    <div class="card leaderboard">
+        <h2 style="color:#FFD966;">🏅 PODIO - MEJORES ESTUDIANTES 🏅</h2>
+        <div class="podium" id="podiumTop3">
+            <div>Cargando ranking...</div>
+        </div>
+        <table id="scoreTable">
+            <thead>
+                <tr><th>Posición</th><th>Nombre</th><th>Puntaje/10</th></tr>
+            </thead>
+            <tbody id="scoreTableBody">
+                <tr><td colspan="3">Conectando con la base de datos...</td></tr>
+            </tbody>
         </table>
     </div>
-
-    <div class="card">
-        <h2>📝 TU TURNO</h2>
-        <input type="text" id="playerName" placeholder="Tu nombre">
-        <button id="saveNameBtn">📝 Registrar</button>
-        <button id="resetQuizBtn">🔄 Reiniciar</button>
-        <div id="statusMessage" class="status-msg">⚡ Ingresa tu nombre y responde</div>
-        <div id="quizContainer"></div>
-        <button id="submitQuizBtn">✅ ENVIAR PUNTAJE</button>
-        <p style="margin-top: 1rem; font-size:0.8rem;">🔁 El ranking se actualiza automáticamente para TODOS</p>
-    </div>
-    <footer style="text-align:center; color:white;">Be going to for commands - Concurso Global con Base de Datos</footer>
+    <footer>🔥 Be going to for commands - Ranking sincronizado con Supabase 🔥</footer>
 </div>
 
 <script>
-    // ========== CONFIGURACIÓN DE SUPABASE ==========
-    // 👇 REEMPLAZA ESTOS VALORES CON LOS TUYOS 👇
-    const SUPABASE_URL = "https://TU_PROYECTO.supabase.co";
-    const SUPABASE_ANON_KEY = "TU_ANON_KEY_AQUI";
-    // ===============================================
+    // ============================================================
+    // CONFIGURACIÓN DE SUPABASE - ¡REEMPLAZA CON TUS DATOS!
+    // ============================================================
+    const SUPABASE_URL = "https://elwipexzqkurxwwoeinu.supabase.co/rest/v1/";
+    const SUPABASE_ANON_KEY = "sb_publishable_kvGTcCJso1mSKKlY3EYUPg_h15h7CMM";
+    // ============================================================
 
     const QUESTIONS = [
-        { text: "Padre a hijo: 'You ______ (tidy) your room instantly!'", options: ["are going to tidy", "is going to tidy", "going to tidy", "will tidy"], correct: "are going to tidy" },
-        { text: "Maestra: 'You ______ (not / cheat) during the test.'", options: ["aren't go to cheat", "are not going to cheat", "not going to cheat", "isn't going to cheat"], correct: "are not going to cheat" },
-        { text: "Capitán: 'We ______ (win) this match.'", options: ["is going to win", "are going to win", "going to win", "will win"], correct: "are going to win" },
-        { text: "Jefe: 'You ______ (finish) the report before 5 PM.'", options: ["is going to finish", "am going to finish", "are going to finish", "finishing"], correct: "are going to finish" },
+        { text: "Un padre le dice a su hijo: 'You ______ (tidy) your room instantly!'", options: ["are going to tidy", "is going to tidy", "going to tidy", "will tidy"], correct: "are going to tidy" },
+        { text: "La maestra: 'You ______ (not / cheat) during the test.'", options: ["aren't go to cheat", "are not going to cheat", "not going to cheat", "isn't going to cheat"], correct: "are not going to cheat" },
+        { text: "Capitán del equipo: 'We ______ (win) this match, no matter what.'", options: ["is going to win", "are going to win", "going to win", "will win"], correct: "are going to win" },
+        { text: "Jefe a empleado: 'You ______ (finish) the report before 5 PM.'", options: ["is going to finish", "am going to finish", "are going to finish", "finishing"], correct: "are going to finish" },
         { text: "Policía: 'You ______ (get) a ticket if you park here.'", options: ["are going to get", "is going to get", "going get", "am going to get"], correct: "are going to get" },
-        { text: "Negativo: 'You ______ (not / be) late again.'", options: ["are not going to be", "is not going to be", "don't going to be", "not be"], correct: "are not going to be" },
-        { text: "Entrenador: 'You ______ (follow) the game plan.'", options: ["am going to follow", "are going to follow", "is going to follow", "following"], correct: "are going to follow" },
-        { text: "¿Cuál es un comando?", options: ["I'm going to sleep", "You are going to respect the rules", "They will come", "She might go"], correct: "You are going to respect the rules" },
-        { text: "Class, you ______ (listen) carefully.", options: ["is going to listen", "are going to listen", "am going to listen", "listen"], correct: "are going to listen" },
-        { text: "Teacher: 'You ______ (stay) at recess.'", options: ["are going to stay", "is going to stay", "stay", "staying"], correct: "are going to stay" }
+        { text: "Forma NEGATIVA: 'You ______ (not / be) late again tomorrow.'", options: ["are not going to be", "is not going to be", "don't going to be", "not be"], correct: "are not going to be" },
+        { text: "Entrenador: 'You ______ (follow) the game plan exactly.'", options: ["am going to follow", "are going to follow", "is going to follow", "following"], correct: "are going to follow" },
+        { text: "¿Cuál es un comando con 'be going to'?", options: ["I'm going to sleep", "You are going to respect the rules", "They will come", "She might go"], correct: "You are going to respect the rules" },
+        { text: "Complete: 'Class, you ______ (listen) carefully.'", options: ["is going to listen", "are going to listen", "am going to listen", "listen"], correct: "are going to listen" },
+        { text: "Teacher: 'You ______ (stay) at recess and complete it.'", options: ["are going to stay", "is going to stay", "stay", "staying"], correct: "are going to stay" }
     ];
 
     let userAnswers = new Array(QUESTIONS.length).fill(null);
     let currentUserName = "";
-    let scores = [];
 
     // Función para cargar ranking desde Supabase
     async function loadScores() {
@@ -88,20 +418,24 @@
                     'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
                 }
             });
-            if (!response.ok) throw new Error('Error al cargar');
-            const data = await response.json();
-            scores = data;
-            displayLeaderboard();
+            
+            if (!response.ok) throw new Error('Error al cargar ranking');
+            
+            const scores = await response.json();
+            displayLeaderboard(scores);
+            return scores;
         } catch (error) {
-            console.error('Error:', error);
-            document.getElementById("scoreTableBody").innerHTML = "<tr><td colspan='3'>Error conectando a la base de datos</td></tr>";
+            console.error('Error cargando:', error);
+            document.getElementById("scoreTableBody").innerHTML = "<tr><td colspan='3'>❌ Error conectando a la base de datos</td></tr>";
+            document.getElementById("podiumTop3").innerHTML = "<div>⚠️ No se pudo cargar el ranking</div>";
+            return [];
         }
     }
 
     // Función para guardar puntaje en Supabase
     async function saveScoreToDB(name, score) {
         try {
-            // Verificar si el usuario ya existe
+            // Primero verificamos si el usuario ya existe y su puntaje actual
             const checkResponse = await fetch(`${SUPABASE_URL}/rest/v1/scores?name=eq.${encodeURIComponent(name)}&select=score`, {
                 headers: {
                     'apikey': SUPABASE_ANON_KEY,
@@ -111,68 +445,82 @@
             
             const existing = await checkResponse.json();
             
+            // Si ya existe y tiene un puntaje igual o mejor, no actualizamos
             if (existing.length > 0 && existing[0].score >= score) {
-                // Ya tiene un puntaje igual o mejor
-                return { success: true, message: `Tu mejor puntaje sigue siendo ${existing[0].score}/10` };
+                return { success: true, message: `Tu mejor puntaje sigue siendo ${existing[0].score}/10`, updated: false };
             }
             
+            // Si existe pero el nuevo puntaje es mejor, actualizamos
             if (existing.length > 0) {
-                // Actualizar si el nuevo puntaje es mejor
                 const updateResponse = await fetch(`${SUPABASE_URL}/rest/v1/scores?name=eq.${encodeURIComponent(name)}`, {
                     method: 'PATCH',
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                        'Content-Type': 'application/json',
-                        'Prefer': 'return=minimal'
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ score: score })
                 });
-                return { success: true, message: `¡Nuevo puntaje actualizado! ${score}/10` };
-            } else {
-                // Insertar nuevo registro
-                const insertResponse = await fetch(`${SUPABASE_URL}/rest/v1/scores`, {
-                    method: 'POST',
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                        'Content-Type': 'application/json',
-                        'Prefer': 'return=minimal'
-                    },
-                    body: JSON.stringify({ name: name, score: score })
-                });
-                return { success: true, message: `¡Puntaje guardado! ${score}/10` };
-            }
+                
+                if (!updateResponse.ok) throw new Error('Error al actualizar');
+                return { success: true, message: `🎉 Nuevo puntaje récord: ${score}/10`, updated: true };
+            } 
+            
+            // Si no existe, creamos un nuevo registro
+            const insertResponse = await fetch(`${SUPABASE_URL}/rest/v1/scores`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: name, score: score })
+            });
+            
+            if (!insertResponse.ok) throw new Error('Error al guardar');
+            return { success: true, message: `✅ Puntaje guardado: ${score}/10`, updated: true };
+            
         } catch (error) {
             console.error('Error guardando:', error);
-            return { success: false, message: 'Error al guardar en la base de datos' };
+            return { success: false, message: '❌ Error al guardar en la base de datos' };
         }
     }
 
-    function displayLeaderboard() {
+    function displayLeaderboard(scores) {
         const tbody = document.getElementById("scoreTableBody");
         const podiumDiv = document.getElementById("podiumTop3");
         
         if (!scores || scores.length === 0) {
-            podiumDiv.innerHTML = "<div>Esperando participantes...</div>";
-            tbody.innerHTML = "<tr><td colspan='3'>Aún no hay puntajes</td></tr>";
+            podiumDiv.innerHTML = "<div>🏆 Esperando participantes... 🏆</div>";
+            tbody.innerHTML = "<tr><td colspan='3'>Aún no hay puntajes. ¡Sé el primero!</td></tr>";
             return;
         }
 
+        // Top 3 para el podio
         const top3 = scores.slice(0, 3);
         const medals = ["🥇", "🥈", "🥉"];
+        const medalColors = ["#FFD700", "#C0C0C0", "#CD7F32"];
         let podiumHtml = "";
         top3.forEach((entry, idx) => {
-            podiumHtml += `<div class="podium-item"><div class="medal">${medals[idx]}</div><strong>${escapeHtml(entry.name)}</strong><br>${entry.score}/10</div>`;
+            podiumHtml += `<div class="podium-item" style="background: ${medalColors[idx]}20; border: 1px solid ${medalColors[idx]}">
+                            <div class="medal">${medals[idx]}</div>
+                            <strong>${escapeHtml(entry.name)}</strong><br>
+                            <span style="font-size: 1.5rem; font-weight: bold;">${entry.score}</span><span>/10</span>
+                        </div>`;
         });
-        podiumDiv.innerHTML = podiumHtml || "<div>Completa el quiz</div>";
+        podiumDiv.innerHTML = podiumHtml;
         
+        // Tabla completa
         tbody.innerHTML = "";
         scores.forEach((entry, idx) => {
             const row = tbody.insertRow();
             row.insertCell(0).innerText = idx + 1;
-            row.insertCell(1).innerText = entry.name;
-            row.insertCell(2).innerText = `${entry.score}/10`;
+            row.insertCell(1).innerHTML = escapeHtml(entry.name);
+            row.insertCell(2).innerHTML = `<strong>${entry.score}</strong>/10`;
+            
+            if (idx === 0) row.style.background = "#FFD70020";
+            else if (idx === 1) row.style.background = "#C0C0C020";
+            else if (idx === 2) row.style.background = "#CD7F3220";
         });
     }
 
@@ -188,96 +536,120 @@
 
     function renderQuiz() {
         const container = document.getElementById("quizContainer");
-        let html = "";
+        if(!container) return;
+        let html = `<div><strong>🎯 Responde cada pregunta:</strong></div>`;
         QUESTIONS.forEach((q, idx) => {
-            html += `<div class="quiz-question"><div><strong>${idx+1}. ${q.text}</strong></div><div class="options" id="options-${idx}">`;
+            const selectedVal = userAnswers[idx] || "";
+            html += `<div class="quiz-question" data-qidx="${idx}">
+                        <div class="question-text">${idx+1}. ${q.text}</div>
+                        <div class="options" id="options-${idx}">`;
             q.options.forEach(opt => {
-                const isSelected = userAnswers[idx] === opt ? "selected" : "";
+                const isSelected = (selectedVal === opt) ? "selected" : "";
                 html += `<div class="option ${isSelected}" data-opt="${escapeHtml(opt)}">${escapeHtml(opt)}</div>`;
             });
             html += `</div></div>`;
         });
         container.innerHTML = html;
         
-        for (let i = 0; i < QUESTIONS.length; i++) {
-            document.querySelectorAll(`#options-${i} .option`).forEach(opt => {
-                opt.addEventListener("click", () => {
-                    userAnswers[i] = opt.getAttribute("data-opt");
-                    document.querySelectorAll(`#options-${i} .option`).forEach(o => o.classList.remove("selected"));
-                    opt.classList.add("selected");
+        for(let i=0; i<QUESTIONS.length; i++) {
+            const optDivs = document.querySelectorAll(`#options-${i} .option`);
+            optDivs.forEach(optDiv => {
+                optDiv.addEventListener("click", () => {
+                    const selectedOption = optDiv.getAttribute("data-opt");
+                    userAnswers[i] = selectedOption;
+                    optDivs.forEach(od => od.classList.remove("selected"));
+                    optDiv.classList.add("selected");
                 });
             });
         }
     }
 
     function calculateScore() {
-        let correct = 0;
-        for (let i = 0; i < QUESTIONS.length; i++) {
-            if (userAnswers[i] === QUESTIONS[i].correct) correct++;
+        let correctCount = 0;
+        for(let i=0; i<QUESTIONS.length; i++) {
+            if(userAnswers[i] === QUESTIONS[i].correct) correctCount++;
         }
-        return correct;
+        return correctCount;
     }
 
     async function saveScore() {
-        if (!currentUserName) {
-            alert("⚠️ Primero registra tu nombre");
+        if(!currentUserName || currentUserName.trim() === "") {
+            const msgDiv = document.getElementById("statusMessage");
+            msgDiv.innerHTML = "⚠️ Primero registra tu nombre";
+            msgDiv.className = "status-msg error";
             return;
         }
         
-        const answeredCount = userAnswers.filter(a => a !== null).length;
-        if (answeredCount < QUESTIONS.length) {
-            alert(`❌ Faltan ${QUESTIONS.length - answeredCount} preguntas por responder`);
+        let answeredCount = userAnswers.filter(a => a !== null).length;
+        if(answeredCount < QUESTIONS.length) {
+            const msgDiv = document.getElementById("statusMessage");
+            msgDiv.innerHTML = `❌ Faltan ${QUESTIONS.length - answeredCount} preguntas por responder`;
+            msgDiv.className = "status-msg error";
             return;
         }
         
-        const score = calculateScore();
+        const finalScore = calculateScore();
         const btn = document.getElementById("submitQuizBtn");
+        const originalText = btn.textContent;
         btn.disabled = true;
-        btn.textContent = "Guardando...";
+        btn.innerHTML = "Guardando... <span class='loading-spinner'></span>";
         
-        const result = await saveScoreToDB(currentUserName, score);
+        const result = await saveScoreToDB(currentUserName, finalScore);
         
+        const msgDiv = document.getElementById("statusMessage");
         if (result.success) {
-            document.getElementById("statusMessage").innerHTML = `✅ ${currentUserName}: ${result.message}`;
-            document.getElementById("statusMessage").style.background = "#d1e7dd";
-            await loadScores(); // Recargar ranking
+            msgDiv.innerHTML = `🎉 ${currentUserName}: ${result.message}`;
+            msgDiv.className = "status-msg";
+            // Recargar ranking para mostrar los cambios
+            await loadScores();
         } else {
-            document.getElementById("statusMessage").innerHTML = `❌ Error: ${result.message}`;
-            document.getElementById("statusMessage").style.background = "#f8d7da";
+            msgDiv.innerHTML = result.message;
+            msgDiv.className = "status-msg error";
         }
         
         btn.disabled = false;
-        btn.textContent = "✅ ENVIAR PUNTAJE";
+        btn.innerHTML = originalText;
     }
-
-    function registerName() {
-        const name = document.getElementById("playerName").value.trim();
-        if (!name) {
-            alert("✏️ Escribe un nombre");
-            return;
-        }
-        currentUserName = name;
-        document.getElementById("statusMessage").innerHTML = `👋 Hola ${currentUserName}, responde las 10 preguntas`;
-        document.getElementById("statusMessage").style.background = "#cfe2ff";
-    }
-
-    function resetQuiz() {
+    
+    function resetQuizAnswers() {
         userAnswers = new Array(QUESTIONS.length).fill(null);
         renderQuiz();
-        document.getElementById("statusMessage").innerHTML = "🔄 Respuestas reiniciadas";
-        document.getElementById("statusMessage").style.background = "#fff3cd";
+        const msgDiv = document.getElementById("statusMessage");
+        msgDiv.innerHTML = "🔄 Respuestas reiniciadas. ¡Vuelve a intentarlo!";
+        msgDiv.className = "status-msg info";
     }
-
+    
+    function registerName() {
+        const nameInput = document.getElementById("playerName");
+        const newName = nameInput.value.trim();
+        if(newName === "") {
+            alert("✏️ Por favor escribe un nombre para participar");
+            return;
+        }
+        currentUserName = newName;
+        const msgDiv = document.getElementById("statusMessage");
+        msgDiv.innerHTML = `👋 ¡Hola ${currentUserName}! Responde las 10 preguntas y envía tu puntaje`;
+        msgDiv.className = "status-msg info";
+    }
+    
     // Auto-refresh cada 10 segundos
-    setInterval(() => {
+    let refreshInterval;
+    
+    function init() {
+        renderQuiz();
         loadScores();
-    }, 10000);
-
-    renderQuiz();
-    loadScores();
-    document.getElementById("saveNameBtn").onclick = registerName;
-    document.getElementById("submitQuizBtn").onclick = saveScore;
-    document.getElementById("resetQuizBtn").onclick = resetQuiz;
+        
+        document.getElementById("saveNameBtn").addEventListener("click", registerName);
+        document.getElementById("submitQuizBtn").addEventListener("click", saveScore);
+        document.getElementById("resetQuizBtn").addEventListener("click", resetQuizAnswers);
+        
+        // Auto-refresh del ranking cada 10 segundos
+        refreshInterval = setInterval(() => {
+            loadScores();
+        }, 10000);
+    }
+    
+    init();
 </script>
 </body>
 </html>
